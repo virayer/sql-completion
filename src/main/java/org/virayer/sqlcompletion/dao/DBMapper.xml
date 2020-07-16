@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.virayer.sqlcompletion.dao.DBMapper">
+    <resultMap id="DDLMap" type="org.virayer.sqlcompletion.entity.DDLInfo">
+        <result column="Table" property="tableName"/>
+        <result column="Create Table" property="tableDDL"/>
+    </resultMap>
+    <update id="ExecuteNonQuery">
+        ${sql}
+    </update>
+    <select id="getTableNamesByDBName" resultType="java.lang.String">
+        select `table_name` from information_schema.tables where table_schema=#{dbName} and table_type='base table';
+    </select>
+    <select id="getTableDDLByDBNameAndTableName" resultMap="DDLMap">
+        show create table ${dbName}.`${tableName}`
+    </select>
+</mapper>
