@@ -33,9 +33,9 @@ public class Bootstrap implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-//        exportSQLBySelectDBName("oauth");
+//        exportSQLBySelectDBName("zigbeedata");
 
-        importSQLDdlToDB("oauth1");
+        importSQLDdlToDB("zigbeedata");
         System.out.println("importSQLDdlToDB finish");
 
     }
@@ -60,6 +60,7 @@ public class Bootstrap implements ApplicationRunner {
                 //不带扩展名的名称
                 String fileName = sqlFile.getName().substring(0, sqlFile.getName().lastIndexOf("."));
                 String fileData = FileUtil.readFileByChars(sqlFile.getAbsolutePath());
+
                 Optional<DDLInfo> optional = dataBaseCurrentDDLs.stream().filter(d -> d.getTableName().equals(fileName)).findFirst();
                 if (optional.isPresent()) {
                     //数据库找到对应DDL，进行检查DDL，进行新增字段等操作。

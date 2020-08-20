@@ -1,7 +1,6 @@
 package org.virayer.sqlcompletion.util;
 
 
-
 import org.virayer.sqlcompletion.entity.ClassInfo;
 import org.virayer.sqlcompletion.entity.FieldInfo;
 
@@ -29,7 +28,8 @@ public class TableParseUtil {
         if (tableSql == null || tableSql.trim().length() == 0) {
             throw new CodeGenerateException("Table structure can not be empty.");
         }
-        tableSql = tableSql.trim().replaceAll("'", "`").replaceAll("\"", "`").replaceAll("，", ",").toLowerCase();
+//        tableSql = tableSql.trim().replaceAll("'", "`").replaceAll("\"", "`").replaceAll("，", ",").toLowerCase();
+        tableSql = tableSql.trim().replaceAll("\"", "`").replaceAll("，", ",").toLowerCase();
 
         // table Name
         String tableName = null;
@@ -157,7 +157,7 @@ public class TableParseUtil {
                     }
                     //2018-9-16 zhengkai 支持'符号以及空格的oracle语句// userid` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
                     String columnName = "";
-                    columnLine = columnLine.replaceAll("`", " ").replaceAll("\"", " ").replaceAll("'", "").replaceAll("  ", " ").trim();
+                    columnLine = columnLine.replaceAll("`", " ").replaceAll("\"", " ").replaceAll("  ", " ").trim();
                     //如果遇到username varchar(65) default '' not null,这种情况，判断第一个空格是否比第一个引号前
                     columnName = columnLine.substring(0, columnLine.indexOf(" "));
 
@@ -178,7 +178,7 @@ public class TableParseUtil {
                     // int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
                     String fieldClass = Object.class.getSimpleName();
                     String fieldTable = Object.class.getSimpleName();
-                    String fieldType = columnLine;
+                    String fieldType = columnLine.replaceAll("，",",");
 
                     //2018-9-16 zhengk 补充char/clob/blob/json等类型，如果类型未知，默认为String
                     //2018-11-22 lshz0088 处理字段类型的时候，不严谨columnLine.contains(" int") 类似这种的，可在前后适当加一些空格之类的加以区分，否则当我的字段包含这些字符的时候，产生类型判断问题。
@@ -201,7 +201,7 @@ public class TableParseUtil {
                             || columnLine.contains("clob") || columnLine.contains("blob") || columnLine.contains("json")) {
                         fieldClass = String.class.getSimpleName();
                         fieldTable = "VARCHAR";
-                        if(columnLine.contains("text") ){
+                        if (columnLine.contains("text")) {
                             fieldTable = "CLOB";
                         }
                     } else if (columnLine.contains("decimal") || columnLine.contains(" number")) {
