@@ -143,7 +143,7 @@ public class FileUtil {
             FileInputStream fileInputStream = new FileInputStream(file);
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
             while (inputStreamReader.read(temp) != -1) {
-                content.append(new String(temp));
+                content.append(new String(temp).replaceAll("\u0000", ""));
                 temp = new char[1024];
             }
 

@@ -132,7 +132,7 @@ public class TableParseUtil {
                 fieldListTmp = fieldListTmp.replace(matcher3.group(), commentTmpFinal);
             }
         }
-        String[] fieldLineList = fieldListTmp.split(",");
+        String[] fieldLineList = fieldListTmp.split(",\n");
         if (fieldLineList.length > 0) {
             int i = 0;
             //i为了解决primary key关键字出现的地方，出现在前3行，一般和id有关
@@ -157,7 +157,8 @@ public class TableParseUtil {
                     }
                     //2018-9-16 zhengkai 支持'符号以及空格的oracle语句// userid` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
                     String columnName = "";
-                    columnLine = columnLine.replaceAll("`", " ").replaceAll("\"", " ").replaceAll("  ", " ").trim();
+                    //columnLine.replaceAll("`", " ")
+                    columnLine = columnLine.replaceAll("\"", " ").replaceAll("  ", " ").trim();
                     //如果遇到username varchar(65) default '' not null,这种情况，判断第一个空格是否比第一个引号前
                     columnName = columnLine.substring(0, columnLine.indexOf(" "));
 
@@ -174,7 +175,7 @@ public class TableParseUtil {
                     }
 
                     // field class
-                    columnLine = columnLine.substring(columnLine.indexOf("`") + 1).trim();
+//                    columnLine = columnLine.substring(columnLine.indexOf("`") + 1).trim();
                     // int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
                     String fieldClass = Object.class.getSimpleName();
                     String fieldTable = Object.class.getSimpleName();

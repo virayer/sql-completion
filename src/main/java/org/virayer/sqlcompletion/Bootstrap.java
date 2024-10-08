@@ -33,10 +33,18 @@ public class Bootstrap implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-//        exportSQLBySelectDBName("zigbeedata");
+//        exportSQLBySelectDBName("eplatform");
+//        exportSQLBySelectDBName("splatform");
+//        exportSQLBySelectDBName("config");
+//        exportSQLBySelectDBName("air_energy_cfg");
 
-        importSQLDdlToDB("zigbeedata");
-        System.out.println("importSQLDdlToDB finish");
+//        importSQLDdlToDB("eplatform");
+//        importSQLDdlToDB("splatform");
+//        importSQLDdlToDB("config");
+//        exportSQLBySelectDBName("security_manager");
+        importSQLDdlToDB("security_manager");
+//        importSQLDdlToDB("air_energy_cfg");
+        System.out.println(" finish");
 
     }
 
@@ -72,15 +80,17 @@ public class Bootstrap implements ApplicationRunner {
                             FieldInfo fieldInfo = fileClassInfo.getFieldList().get(i);
                             Optional<FieldInfo> fieldInfoOptional = currentDBClassInfo.getFieldList().stream().filter(d -> d.getFieldName().equals(fieldInfo.getFieldName())).findFirst();
                             if (!fieldInfoOptional.isPresent()) {
+                                fileClassInfo = TableParseUtil.processTableIntoClassInfo(fileData, false);
                                 //如果数据库里没有字段，添加该字段
                                 String orderInfo = "FIRST";
                                 if (i > 0) {
                                     FieldInfo fieldInfoLast = fileClassInfo.getFieldList().get(i - 1);
-                                    orderInfo = "AFTER " + fieldInfoLast.getFieldName();
+                                    orderInfo = "AFTER " + fieldInfoLast.getFieldName()+"";
                                 }
                                 String addColumSql = String.format("ALTER TABLE %s.`%s` ADD COLUMN %s %s;", dbName, fileName, fieldInfo.getFieldType(), orderInfo);
                                 dbMapper.ExecuteNonQuery(addColumSql);
-                                System.out.println(String.format("add table column '%s' by %s.`%s`", fieldInfo.getFieldName(), dbName, fileClassInfo.getTableName()));
+                                System.out.println(addColumSql);
+//                                System.out.println(String.format("add table column '%s' by %s.`%s`", fieldInfo.getFieldName(), dbName, fileClassInfo.getTableName()));
                             }
                         }
                     } catch (IOException e) {
@@ -88,9 +98,11 @@ public class Bootstrap implements ApplicationRunner {
                     }
                 } else {
                     //数据库没有找到对应DDL，进行新增表操作
-                    String createSql = fileData.replace(String.format("`%s`", fileName), String.format("%s.`%s`", dbName, fileName));
+                    String createSql = fileData.replace(String.format("`%s`", fileName), String.format("%s.`%s`", dbName, fileName))+";".replace(" ","");
+
                     dbMapper.ExecuteNonQuery(createSql);
-                    System.out.println(String.format("create table %s.`%s`", dbName, fileName));
+                    System.out.println(createSql);
+//                    System.out.println(String.format("create table %s.`%s`", dbName, fileName));
                 }
             }
 
